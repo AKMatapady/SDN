@@ -1,0 +1,57 @@
+
+
+sudo apt-get install -y openvswitch-switch openvswitch-common
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo curl -sSL https://get.docker.com/ | sh
+sudo docker run hello-world
+
+sudo docker run -d --name ch1 centos:7 /bin/bash -c "while true; do sleep 5000; done"
+sudo docker inspect --format '{{.NetworkSettings.IPAddress}}' ch1
+sudo docker exec -it ch1 bash
+> ping 172.17.0.3
+sudo ovs-vsctl add-br br-int
+sudo ovs-vsctl show
+sudo ip link add veth0 type veth peer name veth1
+sudo ovs-vsctl add-port br-int veth1
+sudo apt install bridge-utils
+sudo brctl addif docker0 veth0
+sudo ip link set veth1 up
+sudo ip link set veth0 up
+sudo ovs-vsctl add-port br-int gre0 -- set interface gre0 type=gre options:remote_ip=192.168.1.98
+sudo ovs-vsctl show
+sudo brctl show
+sudo docker exec -it ch1 bash
+> ping 172.17.0.3
+sudo docker exec -it ch2 bash
+> ping 172.17.0.2
+
+sudo docker pull yurekten/odl-carbon
+sudo apt-get install default-jdk
+JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+ssh -p 8101 karaf@localhost (password is karaf)
+sudo docker run -d -p 6633:6633 -p 8181:8181 -p 8101:8101 --name=opendaylight yurekten/odl-carbon
+
+feature:install odl-restconf
+feature:install odl-mdsal-apidocs odl-dlux-core
+feature:install odl-restconf odl-mdsal-apidocs odl-dlux-core odl-dluxapps-nodes odl-dluxapps-topology odl-dluxapps-yangui odl-dluxapps-yangvisualizer odl-dluxapps-yangman odl-l2switch-switch
+
+sudo docker pull manell/wireshark
+xhost +
+sudo docker run -ti --net=host --privileged -v $HOME:/root:ro -e XAUTHORITY=/root/.Xauthority -e DISPLAY=$DISPLAY manell/wireshark
+
+
+
+
+
+
+
+
+
+
+
+
+
+

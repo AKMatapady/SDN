@@ -1,2 +1,2 @@
 # SDN
-Project and labs under the course Software Defined Networks
+Project under the course Software Defined Networks
